@@ -29,7 +29,7 @@ for r = 1 : runs
     cvp = cvpartition(Y, 'Holdout', 0.3);    % vectores logicos para entrenamiento y prueba
     %[train,test] = crossvalind('HoldOut',Y,0.3);    
     train = cvp.training;
-    test = ~train;
+    test = cvp
     xTrain = X(:, train);                    % Xtrain: conjunto entrenamiento
     yTrain = Y(:, train);                    % Ytrain: variable de clase del conjunto de entrenamiento
 
@@ -50,19 +50,18 @@ y = classifyBayes(x, zeros, mu_i, sigma_i, p_i);  % Clasificacion de los patrone
 
 figure
 plot(error,'-r')
-%%
+
 figure;
 hold all
 for c = 1: nClasses                         % Por cada clase c
     myplot = x(:,y == c);                   % Otiene los patrones de la clase
-    plot(myplot(1,:),myplot(2,:),'o');      % Grafica la clase obtenida
+    plot(myplot(1,:),myplot(2,:),'.');      % Grafica la clase obtenida
 end
 for c = 1: nClasses                         % Por cada clase c
     myplot = xTest(:,yPred == c);           % Otiene los patrones de la clase
-    plot(myplot(1,:),myplot(2,:),'o');      % Grafica la clase obtenida
+    plot(myplot(1,:),myplot(2,:),'.');      % Grafica la clase obtenida
 end
 myplot = xTest(:,yPred ~= yTest);            % Otiene los patrones con error
-plot(myplot(1,:),myplot(2,:),'+w');      % Grafica los errores
+plot(myplot(1,:),myplot(2,:),'+b');      % Grafica los errores
 
 sum(error)/31
-
