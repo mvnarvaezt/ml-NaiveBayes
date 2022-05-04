@@ -1,7 +1,7 @@
 % Clasificador bayesiano con PDF Gaussiana y regla MAP
 % Author: Valentina Narvaez  
 
-clear all                                        % pwd es la carpeta actual
+clear all                                      
 
 choise = input('Clasificador Bayesiano con PDF Gausiana y seleccioón MAP\n Elige dataset\n 1: overlapped.mat\n2: clouds01.mat\n3: clouds02.mat\n4: twospirals.mat\n5: halfkernel.mat\nElge un dataset:');
 
