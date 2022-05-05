@@ -8,22 +8,27 @@ choise = input('Clasificador Bayesiano con PDF Gausiana y seleccioón MAP\n Elige
 switch choise 
     case 1
         dataset = '/datasets/overlapped.mat';
+        setName = 'overlaped';
     case 2
         dataset = '/datasets/clouds01.mat';
+        setName = 'clouds01';
     case 3
         dataset = '/datasets/clouds02.mat';
+        setName = 'clouds02';
     case 4
         dataset = '/datasets/twospirals.mat';
+        setName = 'twoSpirals';
     case 5
         dataset = '/datasets/halfkernel.mat';
+        setName = 'halfKernel';
     otherwise
         disp('No existe.');
 end
 
 
 load([pwd dataset]);  % x atributos, y variable de clase
-runs = 31;
-error = zeros(1,30);
+runs = 100;
+error = zeros(1,runs);
 
 for r = 1 : runs
     cvp = cvpartition(Y, 'Holdout', 0.3);    % vectores logicos para entrenamiento y prueba
@@ -39,6 +44,7 @@ for r = 1 : runs
     [mu_i,sigma_i,p_i] = trainBayes(xTrain, yTrain);                        % Entrenamiento
     [yPred, error(:,r)] = classifyBayes(xTest, yTest,mu_i, sigma_i, p_i);   % Prueba
     nClasses = length(unique(yPred));
+    
 end
 
 res = 400;                      % Generacion de patrones para pintar el fondo
@@ -48,21 +54,37 @@ xMax = max(xTest, [], 2);
 x = [x1(:),x2(:)]';
 y = classifyBayes(x, zeros, mu_i, sigma_i, p_i);  % Clasificacion de los patrones del fondo
 
-figure
-plot(error,'-r')
 %%
-figure;
-hold all
+f1 = figure
+title('Error rate')
+plot(error,'-r')
+
+%%
+f2 = figure;
+title( strcat('Data set: ', setName) )
+hold on
 for c = 1: nClasses                         % Por cada clase c
     myplot = x(:,y == c);                   % Otiene los patrones de la clase
-    plot(myplot(1,:),myplot(2,:),'o');      % Grafica la clase obtenida
+   h1 = scatter(myplot(1,:),myplot(2,:),'.');      % Grafica la clase obtenida
+   h1.Annotation.LegendInformation.IconDisplayStyle = 'off';
+   alpha(h1,0.0);
 end
+
 for c = 1: nClasses                         % Por cada clase c
     myplot = xTest(:,yPred == c);           % Otiene los patrones de la clase
-    plot(myplot(1,:),myplot(2,:),'o');      % Grafica la clase obtenida
+    h2 = scatter(myplot(1,:),myplot(2,:), 5, 'ob', 'MarkerFaceColor','w' );      % Grafica la clase obtenida
+    h2.Annotation.LegendInformation.IconDisplayStyle = 'off';
 end
+h2.Annotation.LegendInformation.IconDisplayStyle = 'on';
 myplot = xTest(:,yPred ~= yTest);            % Otiene los patrones con error
-plot(myplot(1,:),myplot(2,:),'+w');      % Grafica los errores
+scatter(myplot(1,:),myplot(2,:),15,'or', 'MarkerFaceColor','w');      % Grafica los errores
 
-sum(error)/31
+xlabel('Pred 1');
+ylabel('Pred 2');
+legend({'correct', 'errors'});
+
+sum(error)/runs
+
+print(f1, strcat('img/',setName,'-error'), '-dpng' );
+print(f2, strcat('img/',setName,'-class'), '-dpng' );
 
